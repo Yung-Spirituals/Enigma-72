@@ -10,7 +10,7 @@ import java.net.DatagramPacket;
 public class Client {
     private final InetAddress inetAddress;
     private final int port;
-    DatagramSocket datagramSocket;
+    private DatagramSocket datagramSocket;
     private boolean socketIsOpen;
 
     public Client(String ipAddress, int port) throws UnknownHostException {
