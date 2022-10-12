@@ -11,6 +11,8 @@ public class Main {
 
         int howManyTimes = 3;
         for (int i = 0; i < howManyTimes; i++) {
+            client.openSocket();
+
             String response = client.sendAndReceive("task");
             System.out.println(response);
 
@@ -19,6 +21,8 @@ public class Main {
 
             response = client.sendAndReceive(result);
             System.out.println(response);
+
+            client.closeSocket();
         }
     }
 }

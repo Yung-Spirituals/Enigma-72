@@ -10,6 +10,8 @@ import java.net.DatagramPacket;
 public class Client {
     private final InetAddress inetAddress;
     private final int port;
+    DatagramSocket datagramSocket;
+    private boolean socketIsOpen;
 
     public Client(String ipAddress, int port) throws UnknownHostException {
         this.inetAddress = InetAddress.getByName(ipAddress);
@@ -17,7 +19,8 @@ public class Client {
     }
 
     public String sendAndReceive(String string) throws IOException {
-        DatagramSocket datagramSocket = new DatagramSocket();
+        if (!socketIsOpen) throw new SocketException();
+
         byte[] buffer = string.getBytes();
         DatagramPacket datagramPacket = new DatagramPacket(buffer, buffer.length, this.inetAddress, port);
         datagramSocket.send(datagramPacket);
@@ -26,8 +29,17 @@ public class Client {
         DatagramPacket response = new DatagramPacket(buffer, buffer.length, this.inetAddress, port);
         datagramSocket.receive(response);
 
-        String responseText = new String(response.getData(), 0, response.getLength());
-        datagramSocket.close();
-        return responseText;
+        return new String(response.getData(), 0, response.getLength());
+    }
+
+    public void openSocket() throws SocketException {
+        this.datagramSocket = new DatagramSocket();
+        this.socketIsOpen = true;
+    }
+
+    public void closeSocket() {
+        this.datagramSocket.close();
+        this.datagramSocket = null;
+        this.socketIsOpen = false;
     }
 }
