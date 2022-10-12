@@ -8,25 +8,26 @@ import java.net.UnknownHostException;
 import java.net.DatagramPacket;
 
 public class Client {
-    private final DatagramSocket datagramSocket;
     private final InetAddress inetAddress;
     private final int port;
 
-    public Client(String ipAddress, int port) throws UnknownHostException, SocketException {
-        this.datagramSocket = new DatagramSocket();
+    public Client(String ipAddress, int port) throws UnknownHostException {
         this.inetAddress = InetAddress.getByName(ipAddress);
         this.port = port;
     }
 
     public String sendAndReceive(String string) throws IOException {
+        DatagramSocket datagramSocket = new DatagramSocket();
         byte[] buffer = string.getBytes();
         DatagramPacket datagramPacket = new DatagramPacket(buffer, buffer.length, this.inetAddress, port);
-        this.datagramSocket.send(datagramPacket);
+        datagramSocket.send(datagramPacket);
 
         buffer = new byte[datagramSocket.getReceiveBufferSize()];
         DatagramPacket response = new DatagramPacket(buffer, buffer.length, this.inetAddress, port);
-        this.datagramSocket.receive(response);
+        datagramSocket.receive(response);
 
-        return new String(response.getData(), 0, response.getLength());
+        String responseText = new String(response.getData(), 0, response.getLength());
+        datagramSocket.close();
+        return responseText;
     }
 }
